@@ -1,4 +1,4 @@
-# dsh-mj-spiderman-plugin · MJ 蜘蛛侠彩蛋插件（DSH Client 插件）
+# dsh-mj-spiderman-plugin · MJ 蜘蛛侠彩蛋插件（v0.6.0：修复倒立/触发冷却/实时生效，新增旋转滑块与保存按钮）（DSH Client 插件）
 
 在 DeepSeek Harness 网页端**任意输入框**输入 `mj`（不分大小写）→ 蜘蛛侠以**透明悬浮窗**特效浮现在界面上，播放完自动消失。
 视频 + json 驱动，**WebGL 合成**（alpha 遮罩 + RGB 通道分离），参考 [shuliko.zh.kg](https://shuliko.zh.kg)。
