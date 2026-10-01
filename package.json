@@ -1,0 +1,35 @@
+{
+  "name": "dsh-mj-spiderman",
+  "version": "0.3.0",
+  "description": "MJ 蜘蛛侠彩蛋插件",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "mj",
+    "spiderman",
+    "webgl",
+    "video",
+    "easter-egg"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "assets",
+    "README.md"
+  ],
+  "assets": {
+    "avatar": "assets/mj.png",
+    "videos": [
+      "assets/video1.mp4",
+      "assets/video2.mp4"
+    ],
+    "configs": [
+      "assets/video1.json",
+      "assets/video2.json"
+    ]
+  },
+  "license": "MIT",
+  "website": "https://shuliko.zh.kg"
+}
