@@ -1,8 +1,6 @@
-# dsh-mj-spiderman-plugin 的 DSH bundle 补丁
-# 安装插件时由 DSH 合并进 bundle 配置，注册插件并启用。
-# 参考 @deepseek-ai/cordis-plugin-* 的 patch 约定（koishi/cordis bundle patch 语法）。
+# dsh-mj-spiderman-plugin bundle patch —— 挂载进 profile 插件树。
+# host 半为空，仅让客户端 bundle（dsh.client）被发现并注入浏览器。
 - insert:
-  - id: dsh-mj-spiderman
-    name: dsh-mj-spiderman-plugin
-    disabled: false
-    config: {}
+    - id: dsh-mj-spiderman-plugin
+      name: dsh-mj-spiderman-plugin
+      config: {}

@@ -1,7 +1,43 @@
 {
   "name": "dsh-mj-spiderman-plugin",
-  "version": "0.4.0",
-  "description": "MJ 蜘蛛侠彩蛋插件：任意输入框输入 mj（不分大小写）触发 透明悬浮窗特效，视频+json WebGL 合成（alpha 遮罩 + RGB 通道，参考 shuliko.zh.kg）。",
+  "version": "0.5.0",
+  "description": "MJ 蜘蛛侠彩蛋插件：任意输入框输入 mj 触发透明悬浮窗特效（视频+json WebGL 合成，DSH Client 插件）",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "dsh": {
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@deepseek-ai/dsh-client-ui-settings-plugins"
+      ],
+      "platform": "web"
+    },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "files": [
+    "lib/**/*.js",
+    "cordis.patch.yml",
+    "assets",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/biteainet/dsh-mj-spiderman-plugin.git"
+  },
+  "license": "MIT",
   "keywords": [
     "dsh",
     "dsh-plugin",
@@ -10,32 +46,6 @@
     "mj",
     "spiderman",
     "webgl",
-    "video",
-    "easter-egg"
-  ],
-  "main": "lib/index.js",
-  "files": [
-    "lib/**",
-    "assets/**",
-    "cordis.patch.yml",
-    "README.md"
-  ],
-  "dsh": {
-    "bundle": {
-      "patch": "./cordis.patch.yml"
-    }
-  },
-  "assets": {
-    "avatar": "assets/mj.png",
-    "videos": [
-      "assets/video1.mp4",
-      "assets/video2.mp4"
-    ],
-    "configs": [
-      "assets/video1.json",
-      "assets/video2.json"
-    ]
-  },
-  "license": "MIT",
-  "website": "https://shuliko.zh.kg"
+    "client-plugin"
+  ]
 }

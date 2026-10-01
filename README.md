@@ -1,7 +1,16 @@
-# dsh-mj-spiderman · MJ 蜘蛛侠彩蛋插件（悬浮窗版）
+# dsh-mj-spiderman-plugin · MJ 蜘蛛侠彩蛋插件（DSH Client 插件）
 
-在**任意输入框**输入 `mj`（不分大小写）→ 蜘蛛侠以**透明悬浮窗**浮现在界面上。
+在 DeepSeek Harness 网页端**任意输入框**输入 `mj`（不分大小写）→ 蜘蛛侠以**透明悬浮窗**特效浮现在界面上，播放完自动消失。
 视频 + json 驱动，**WebGL 合成**（alpha 遮罩 + RGB 通道分离），参考 [shuliko.zh.kg](https://shuliko.zh.kg)。
+
+## 安装
+
+```bash
+dsh plugin --profile web add github:biteainet/dsh-mj-spiderman-plugin
+# 重启 dsh web 生效
+```
+
+安装后浏览器端自动注入（标准 `dsh.client` Client 插件机制），无需手动配置。
 
 ## 原理（json + WebGL 合成）
 
@@ -20,72 +29,35 @@ a     = texture(a).r                      // R 通道作为 alpha
 gl_FragColor = vec4(rgb * a, a);          // 透明背景合成
 ```
 
-蜘蛛侠即以透明贴图渲染进悬浮窗（无黑边、无底片），可拖可缩放。
+蜘蛛侠即以透明贴图渲染进悬浮窗（无黑边、无底片）。
 
-## 资源
+## 结构（DSH 标准 Host + Client 双半）
 
 | 文件 | 说明 |
 |---|---|
-| `assets/video1.mp4` / `video2.mp4` | 彩蛋视频源（宽帧） |
-| `assets/video1.json` / `video2.json` | WebGL 合成配置（帧坐标 / 尺寸 / 帧数） |
-| `assets/mj.png` | 蜘蛛侠同人头像（站点原图） |
-| `lib/index.js` | 插件本体（悬浮窗 + 合成 + 触发；UMD 双模式：Cordis 插件导出 / 浏览器 script 自执行） |
-| `cordis.patch.yml` | DSH bundle 配置补丁（安装时注册插件，官方 patch 语法） |
-| `package.json` | DSH 插件包声明（含 dsh.bundle.patch 指向补丁） |
-
-## 发布 / 安装
-
-### 方式 A：GitHub 仓库安装（无需 npm 账号）
-仓库根目录保持本包结构（package.json + cordis.patch.yml + lib/ + assets/），
-打版本 tag（如 v0.1.0）并创建 Release，仓库添加 topic `dsh-plugin`，然后：
-```bash
-dsh plugin --profile web add github:biteainet/dsh-mj-spiderman-plugin
-```
-
-### 方式 B：npm 发布（正式社区包）
-```bash
-npm pack --dry-run   # 核对文件列表（lib、assets、cordis.patch.yml）
-npm publish --access public
-dsh plugin --profile web add dsh-mj-spiderman-plugin
-```
-
-### 方式 C：本地离线包（自测）
-```bash
-npm pack   # 生成 dsh-mj-spiderman-plugin-0.4.0.tgz
-dsh plugin --profile web add ./dsh-mj-spiderman-plugin-0.4.0.tgz
-```
+| `lib/index.js` | **Host 半**（Node）：空实现，让包进入插件树，从而被 ClientModuleRegistry 扫描发现 |
+| `lib/client.js` | **Client 半**（浏览器）：`__ModuleLoader__.load({id, factory})`，悬浮窗 + WebGL 合成 + 输入监听 + 设置面板；视频/json/头像全部 base64 内联（`/plugins/<id>/` 只服务 client bundle，不静态服务 assets） |
+| `assets/` | 源码资源（video1/2.mp4、video1/2.json、mj.png），打包时可分发但不被运行时引用 |
+| `cordis.patch.yml` | bundle 补丁：`- insert: {id: dsh-mj-spiderman-plugin, name: dsh-mj-spiderman-plugin}` |
+| `package.json` | 声明 `dsh.client`（platform: web）+ `dsh.bundle.patch` + `exports["./client"]` |
 
 ## 使用
 
-### 方式 D：DeepSeek Harness / DSH 插件
-安装后由 DSH 加载 `lib/index.js`（Cordis 插件入口）；也可直接把 `lib/index.js` 引入宿主页面：
-
-```html
-<script src="path/to/lib/index.js"></script>
-```
-
-加载后自动注册监听——**任意输入框**（input / textarea / contenteditable，含动态创建的）输入 `mj`（大小写不限）即触发。
-
-### 方式 B：手动触发
-```js
-window.__dshMj.trigger();   // 直接弹出蜘蛛侠悬浮窗
-window.__dshMj.hide();      // 关闭
-```
-
-## 悬浮窗交互
-
-- **单指 / 鼠标拖动**：移动位置
-- **双指捏合**：缩放（120px ~ 屏幕 90%）
-- **右上角 × / 手动调用 hide**：关闭（桌面端鼠标悬停显示 ×）
-- 视频播放完后保留最后一帧作为挂件悬浮，不会自动消失
+- 任意输入框（input / textarea / contenteditable，含动态创建的）输入 `mj`（大小写不限）→ 随机播放特效，播完自动消失
+- **右侧小圆球**（蜘蛛侠头像）→ 打开设置面板
+  - 特效 1 / 特效 2 两个 tab，**参数各自独立**：大小 / 上下 / 左右 / 左右镜像
+  - **预览**按钮：循环播放当前选中特效（滑块即时生效）
+  - 参数自动保存到 `localStorage`（`dsh_mj_perf`）
+- 悬浮窗：`pointer-events: none`（点击穿透）、不可拖动、播完自动隐藏
+- 手动 API：`window.__dshMj.trigger()` / `window.__dshMj.hide()` / `window.__dshMj.openPanel()`
 
 ## 兼容性
 
-- 现代浏览器：WebGL 合成（透明悬浮）
-- 旧浏览器 / WebGL 不可用：悬浮窗内直接播放 mp4（与站点 LegacyPlayer 一致）
-- 移动端：`playsinline`、触摸拖动 / 捏合缩放
+- WebGL 可用：透明合成悬浮窗
+- WebGL 不可用 / 出错：悬浮窗内直接播放 mp4（降级）
+- 移动端：`playsinline`
 
 ## 说明
 
-- 视频与 json 均取自站点（video1 / video2 双素材随机播放）
+- 视频与 json 均取自 shuliko.zh.kg（video1 / video2 双素材随机播放）
 - 触发不分大小写：`mj` / `MJ` / `Mj` 均有效
