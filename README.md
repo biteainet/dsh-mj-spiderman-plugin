@@ -29,12 +29,36 @@ gl_FragColor = vec4(rgb * a, a);          // 透明背景合成
 | `assets/video1.mp4` / `video2.mp4` | 彩蛋视频源（宽帧） |
 | `assets/video1.json` / `video2.json` | WebGL 合成配置（帧坐标 / 尺寸 / 帧数） |
 | `assets/mj.png` | 蜘蛛侠同人头像（站点原图） |
-| `lib/index.js` | 插件本体（悬浮窗 + 合成 + 触发，无页面依赖） |
+| `lib/index.js` | 插件本体（悬浮窗 + 合成 + 触发；UMD 双模式：Cordis 插件导出 / 浏览器 script 自执行） |
+| `cordis.patch.yml` | DSH bundle 配置补丁（安装时注册插件，官方 patch 语法） |
+| `package.json` | DSH 插件包声明（含 dsh.bundle.patch 指向补丁） |
+
+## 发布 / 安装
+
+### 方式 A：GitHub 仓库安装（无需 npm 账号）
+仓库根目录保持本包结构（package.json + cordis.patch.yml + lib/ + assets/），
+打版本 tag（如 v0.1.0）并创建 Release，仓库添加 topic `dsh-plugin`，然后：
+```bash
+dsh plugin --profile web add github:biteainet/dsh-mj-spiderman-plugin
+```
+
+### 方式 B：npm 发布（正式社区包）
+```bash
+npm pack --dry-run   # 核对文件列表（lib、assets、cordis.patch.yml）
+npm publish --access public
+dsh plugin --profile web add dsh-mj-spiderman-plugin
+```
+
+### 方式 C：本地离线包（自测）
+```bash
+npm pack   # 生成 dsh-mj-spiderman-plugin-0.4.0.tgz
+dsh plugin --profile web add ./dsh-mj-spiderman-plugin-0.4.0.tgz
+```
 
 ## 使用
 
-### 方式 A：DeepSeek Harness / DSH 插件
-按 DSH 插件规范安装本 npm 包，或直接把 `lib/index.js` 引入宿主页面：
+### 方式 D：DeepSeek Harness / DSH 插件
+安装后由 DSH 加载 `lib/index.js`（Cordis 插件入口）；也可直接把 `lib/index.js` 引入宿主页面：
 
 ```html
 <script src="path/to/lib/index.js"></script>
