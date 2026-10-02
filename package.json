@@ -1,6 +1,6 @@
-{
+﻿{
   "name": "dsh-mj-spiderman-plugin",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "MJ 蜘蛛侠彩蛋插件：任意输入框输入 mj 触发透明悬浮窗特效（视频+json WebGL 合成，DSH Client 插件）",
   "type": "module",
   "main": "lib/index.js",
